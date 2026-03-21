@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 // User-Agent requerido por la política de uso de Nominatim
 const UA = process.env.USER_AGENT;
 app.use(express.json());
