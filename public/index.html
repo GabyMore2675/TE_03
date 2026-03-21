@@ -3,50 +3,112 @@
 <head>
 <meta charset="UTF-8"/>
 <title>Consulta Geolocalización OSM</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<!-- Leaflet CSS (VERSIÓN CORRECTA) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+  body { font-family: Arial; margin: 20px; }
+  #map { height: 400px; margin-top: 20px; }
+</style>
+
 </head>
+
 <body>
+
 <h2>Consulta de Geolocalización — OpenStreetMap</h2>
+
 <fieldset>
 <legend>Origen</legend>
 Lat: <input id="oLat" value="-16.414005"/>
 Lon: <input id="oLon" value="-71.515773"/>
 <p id="dirOrigen"></p>
 </fieldset>
+
 <fieldset>
 <legend>Destino</legend>
 Lat: <input id="dLat" value="-16.406547"/>
 Lon: <input id="dLon" value="-71.553179"/>
 <p id="dirDestino"></p>
 </fieldset>
+
 <button onclick="consultar()">Consultar</button>
+
 <p>Distancia: <span id="dist"></span> km</p>
 <p>Tiempo estimado: <span id="tiempo"></span> min</p>
+
 <p style="font-size:0.8em;color:#888">
 Datos © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>
 </p>
+
+<!-- MAPA (ANTES DEL SCRIPT) -->
+<div id="map"></div>
+
+<!-- Leaflet JS (ANTES DEL SCRIPT PROPIO) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
+// ================= MAPA =================
+const map = L.map('map').setView([-16.409047, -71.537451], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+let marcadorOrigen, marcadorDestino, linea;
+
+// ================= FUNCIONES =================
+
 async function consultar() {
-const [oLat, oLon, dLat, dLon] = [
-v('oLat'), v('oLon'), v('dLat'), v('dLon')
-];
-// Geocodificación inversa de origen y destino
-const gO = await api(`/api/geocode?lat=${oLat}&lon=${oLon}`);
-const gD = await api(`/api/geocode?lat=${dLat}&lon=${dLon}`);
-set('dirOrigen', gO.direccion);
-set('dirDestino', gD.direccion);
-// Ruta
-const r = await api(
-`/api/ruta?oLat=${oLat}&oLon=${oLon}&dLat=${dLat}&dLon=${dLon}`
-);
-set('dist', r.distancia_km);
-set('tiempo', r.duracion_min);
+
+  const oLat = v('oLat');
+  const oLon = v('oLon');
+  const dLat = v('dLat');
+  const dLon = v('dLon');
+
+  // 🔹 Geocodificación
+  const gO = await api(`/api/geocode?lat=${oLat}&lon=${oLon}`);
+  const gD = await api(`/api/geocode?lat=${dLat}&lon=${dLon}`);
+
+  set('dirOrigen', gO.direccion);
+  set('dirDestino', gD.direccion);
+
+  // 🔹 Ruta
+  const r = await api(`/api/ruta?oLat=${oLat}&oLon=${oLon}&dLat=${dLat}&dLon=${dLon}`);
+
+  set('dist', r.distancia_km);
+  set('tiempo', r.duracion_min);
+
+  // 🔹 Dibujar en mapa
+  dibujarMapa(oLat, oLon, dLat, dLon);
 }
+
+// ================= MAPA DINÁMICO =================
+
+function dibujarMapa(oLat, oLon, dLat, dLon) {
+
+  if (marcadorOrigen) map.removeLayer(marcadorOrigen);
+  if (marcadorDestino) map.removeLayer(marcadorDestino);
+  if (linea) map.removeLayer(linea);
+
+  marcadorOrigen = L.marker([oLat, oLon]).addTo(map).bindPopup("Origen");
+  marcadorDestino = L.marker([dLat, dLon]).addTo(map).bindPopup("Destino");
+
+  linea = L.polyline([
+    [oLat, oLon],
+    [dLat, dLon]
+  ]).addTo(map);
+
+  map.fitBounds(linea.getBounds());
+}
+
+// ================= HELPERS =================
+
 const api = url => fetch(url).then(r => r.json());
 const v = id => document.getElementById(id).value;
 const set = (id, val) => document.getElementById(id).textContent = val;
+
 </script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <div id="map" style="height: 400px;"></div>
+
 </body>
 </html>
