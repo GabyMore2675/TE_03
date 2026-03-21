@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <title>Consulta Geolocalización OSM</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
 <h2>Consulta de Geolocalización — OpenStreetMap</h2>
@@ -45,5 +46,7 @@ const api = url => fetch(url).then(r => r.json());
 const v = id => document.getElementById(id).value;
 const set = (id, val) => document.getElementById(id).textContent = val;
 </script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <div id="map" style="height: 400px;"></div>
 </body>
 </html>
