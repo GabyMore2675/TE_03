@@ -1,25 +1,29 @@
-import emailjs from "emailjs-com";
+export const enviarCorreo = (cliente, carrito, metodo) => {
 
-export const enviarCorreo = (cliente, producto, metodo) => {
+  const total = carrito.reduce(
+    (acc, p) => acc + (p.offerPrice || p.price) * (p.qty || 1),
+    0
+  );
 
-  // ✅ cálculos (igual que tu PDF)
-  const total = producto.offerPrice || producto.price;
   const subtotal = total / 1.18;
   const igv = total - subtotal;
 
+  const listaProductos = carrito.map(p =>
+    `${p.name} x${p.qty} - S/ ${(p.offerPrice || p.price)}`
+  ).join("\n");
+
   return emailjs.send(
-    "service_9blvnpx",
-    "template_nzhzwfh",
+    process.env.REACT_APP_EMAIL_SERVICE,
+    process.env.REACT_APP_EMAIL_TEMPLATE,
     {
       nombre: cliente.nombre,
       email: cliente.email,
-      producto: producto.name,
-      precio: total,
+      productos: listaProductos,
       metodo: metodo,
       subtotal: subtotal.toFixed(2),
       igv: igv.toFixed(2),
       total: total.toFixed(2)
     },
-    "AzlvQrjw81eBQzoNY"
+    process.env.REACT_APP_EMAIL_PUBLIC_KEY
   );
 };
