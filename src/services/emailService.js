@@ -1,4 +1,6 @@
 import emailjs from "emailjs-com";
+import { producto } from "../context/CartContext";
+import dotenv from "dotenv";
 
 export const enviarCorreo = (cliente, carrito, metodo) => {
 
@@ -20,7 +22,7 @@ export const enviarCorreo = (cliente, carrito, metodo) => {
     {
       nombre: cliente.nombre,
       email: cliente.email,
-      productos: listaProductos,
+      producto: listaProductos,
       metodo: metodo,
       subtotal: subtotal.toFixed(2),
       igv: igv.toFixed(2),
