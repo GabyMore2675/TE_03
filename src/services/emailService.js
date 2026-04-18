@@ -1,3 +1,5 @@
+import emailjs from "emailjs-com";
+
 export const enviarCorreo = (cliente, carrito, metodo) => {
 
   const total = carrito.reduce(
