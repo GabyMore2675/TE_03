@@ -4,6 +4,7 @@ import { generarPDF } from "../services/pdfService";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { products } from "../data/products";
+import { enviarCorreo } from "../services/emailService";
 
 function Checkout() {
   const { cart, removeFromCart, updateQty, setCart, msg } = useContext(CartContext);
@@ -67,6 +68,9 @@ function Checkout() {
       const exito = Math.random() > 0.2;
       if (exito) {
         generarPDF(cliente, cart, metodo);
+        enviarCorreo(cliente, cart, metodo)
+          .then(() => console.log("Correo enviado"))
+          .catch((error) => console.error("Error correo:", error));
 
         setSuccess(true);
 
