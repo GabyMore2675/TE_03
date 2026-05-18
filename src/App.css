@@ -1,102 +1,474 @@
+/* =========================================
+   GLOBAL
+========================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 body {
-  font-family: Arial;
-  background: #0f172a;
+
+  font-family:
+    "Inter",
+    "Segoe UI",
+    sans-serif;
+
+  background:
+    linear-gradient(
+      135deg,
+      #020617,
+      #0f172a,
+      #111827,
+      #1e293b
+    );
+
+  background-attachment: fixed;
+
   color: white;
+
+  min-height: 100vh;
+
+  overflow-x: hidden;
 }
+
+/* =========================================
+   LINKS
+========================================= */
+
+a {
+  text-decoration: none !important;
+  transition: 0.3s ease;
+}
+
+a:hover {
+  opacity: 0.9;
+}
+
+/* =========================================
+   CARDS
+========================================= */
 
 .card {
-  background: #1e293b;
-  padding: 15px;
-  border-radius: 10px;
-}
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-}
+  background:
+    rgba(255,255,255,0.08) !important;
 
-button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 10px;
-}
-.checkout {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 400px;
-  margin: auto;
-}
+  backdrop-filter: blur(14px);
 
-input {
-  display: block;
-  margin: 10px 0;
-  padding: 8px;
-  width: 100%;
-}
+  -webkit-backdrop-filter: blur(14px);
 
-button {
-  background: #22c55e;
-  padding: 10px;
-  border: none;
-  color: white;
-  width: 100%;
-}
+  border:
+    1px solid rgba(255,255,255,0.1);
 
-nav {
-  display: flex;
-  justify-content: space-between;
-  background: #0f172a;
-  padding: 15px;
-}
+  border-radius: 24px !important;
 
-.card {
-  transition: 0.3s;
+  color: white !important;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  overflow: hidden;
 }
 
 .card:hover {
-  transform: scale(1.05);
+
+  transform:
+    translateY(-6px);
+
+  box-shadow:
+    0 15px 35px rgba(0,0,0,0.4);
 }
 
-button {
-  cursor: pointer;
-  transition: 0.3s;
+/* =========================================
+   BUTTONS
+========================================= */
+
+button,
+.btn {
+
+  border-radius: 14px !important;
+
+  transition: 0.3s ease !important;
+
+  font-weight: 600 !important;
+
+  border: none !important;
 }
 
-button:hover {
-  transform: scale(1.05);
-  background: #1d4ed8;
+button:hover,
+.btn:hover {
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.25);
 }
 
-.checkout {
-  background: #1e293b;
+/* =========================================
+   INPUTS
+========================================= */
+
+input,
+textarea,
+select {
+
+  background:
+    rgba(255,255,255,0.08) !important;
+
+  border:
+    1px solid rgba(255,255,255,0.15) !important;
+
+  color: white !important;
+
+  border-radius: 14px !important;
+
+  padding: 12px !important;
+
+  transition: 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+
+  border:
+    1px solid #3b82f6 !important;
+
+  box-shadow:
+    0 0 0 4px rgba(59,130,246,0.2) !important;
+
+  outline: none !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+
+  color:
+    rgba(255,255,255,0.55);
+}
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar {
+
+  backdrop-filter: blur(14px);
+
+  background:
+    rgba(2,6,23,0.85) !important;
+
+  border-bottom:
+    1px solid rgba(255,255,255,0.08);
+}
+
+/* =========================================
+   DROPDOWN
+========================================= */
+
+.dropdown-menu-custom {
+
+  background:
+    rgba(15,23,42,0.95);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius: 16px;
+
+  backdrop-filter: blur(12px);
+}
+
+.dropdown-item {
+
+  padding: 10px;
+
+  border-radius: 10px;
+
+  transition: 0.2s ease;
+}
+
+.dropdown-item:hover {
+
+  background:
+    rgba(59,130,246,0.15);
+}
+
+/* =========================================
+   TABLES
+========================================= */
+
+.table {
+
+  color: white !important;
+
+  overflow: hidden;
+
+  border-radius: 16px;
+}
+
+.table thead {
+
+  background:
+    rgba(255,255,255,0.08);
+}
+
+.table tbody tr:hover {
+
+  background:
+    rgba(255,255,255,0.04);
+}
+
+/* =========================================
+   BADGES
+========================================= */
+
+.badge {
+
+  font-size: 13px;
+
+  padding:
+    8px 12px;
+
+  border-radius: 10px;
+
+  font-weight: 600;
+}
+
+/* =========================================
+   IMAGES
+========================================= */
+
+img {
+
+  object-fit: cover;
+}
+
+/* =========================================
+   PRODUCT CARD
+========================================= */
+
+.card-img-top {
+
+  height: 240px;
+
+  object-fit: cover;
+
+  transition: 0.4s ease;
+}
+
+.card:hover .card-img-top {
+
+  transform: scale(1.03);
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar {
+
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+
+  background:
+    #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+
+  background:
+    linear-gradient(
+      180deg,
+      #2563eb,
+      #0ea5e9
+    );
+
+  border-radius: 20px;
+}
+
+/* =========================================
+   TITLES
+========================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+  font-weight: 700;
+
+  letter-spacing: 0.3px;
+}
+
+/* =========================================
+   CHATBOT
+========================================= */
+
+.chat-message {
+
+  animation:
+    fadeIn 0.3s ease;
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes fadeIn {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(10px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+
+  }
+}
+
+@keyframes floatAnimation {
+
+  0% {
+
+    transform:
+      translateY(0px);
+
+  }
+
+  50% {
+
+    transform:
+      translateY(-6px);
+
+  }
+
+  100% {
+
+    transform:
+      translateY(0px);
+
+  }
+}
+
+/* =========================================
+   JSON BLOCK
+========================================= */
+
+pre {
+
+  background:
+    #020617 !important;
+
+  color:
+    #22c55e !important;
+
+  border-radius: 18px;
+
   padding: 20px;
-  border-radius: 12px;
-  max-width: 400px;
-  margin: auto;
+
+  overflow-x: auto;
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    inset 0 0 15px rgba(0,0,0,0.3);
 }
 
-input {
-  display: block;
-  margin: 10px 0;
-  padding: 10px;
-  width: 100%;
-  border-radius: 8px;
-  border: none;
+/* =========================================
+   HERO EFFECT
+========================================= */
+
+.hero-glow {
+
+  position: relative;
+
+  z-index: 1;
 }
 
-button {
-  margin-top: 10px;
-  padding: 10px;
-  width: 100%;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
+.hero-glow::before {
+
+  content: "";
+
+  position: absolute;
+
+  width: 350px;
+  height: 350px;
+
+  background:
+    rgba(37,99,235,0.25);
+
+  filter: blur(120px);
+
+  top: -120px;
+  left: -120px;
+
+  z-index: -1;
 }
 
-button:hover {
-  background: #1d4ed8;
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.dashboard-card {
+
+  animation:
+    fadeIn 0.5s ease;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+
+  background:
+    rgba(2,6,23,0.9) !important;
+
+  backdrop-filter: blur(10px);
+
+  border-top:
+    1px solid rgba(255,255,255,0.08);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .navbar {
+
+    padding: 15px !important;
+  }
+
+  .card-img-top {
+
+    height: 200px;
+  }
+
 }

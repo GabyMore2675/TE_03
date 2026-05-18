@@ -1,52 +1,219 @@
 import { useContext } from "react";
-import { CartContext } from "../context/CartContext";
+
 import { Link } from "react-router-dom";
 
+import { CartContext } from "../context/CartContext";
+
 function ProductCard({ product }) {
-  const { addToCart } = useContext(CartContext);
+
+  const { addToCart } =
+    useContext(CartContext);
+
+  // =========================================
+  // IMAGEN
+  // =========================================
+
+  const image =
+    product.image_url ||
+    "https://via.placeholder.com/400x300?text=Sin+Imagen";
+
+  // =========================================
+  // PRECIOS
+  // =========================================
+
+  const price =
+    Number(product.price);
+
+  const offerPrice =
+    Number(product.offer_price);
+
+  const hasOffer =
+    offerPrice > 0;
+
+  // =========================================
+  // STOCK
+  // =========================================
+
+  const stock =
+    Number(product.stock);
 
   return (
-    <div className="card shadow-sm h-100">
-      <Link to={`/producto/${product.id}`}>
-        <img src={product.img} className="card-img-top" alt={product.name} />
+
+    <div className="card shadow-sm border-0 h-100 rounded-4 overflow-hidden">
+
+      {/* ===================================== */}
+      {/* IMAGEN */}
+      {/* ===================================== */}
+
+      <Link
+        to={`/producto/${product.id}`}
+        className="text-decoration-none"
+      >
+
+        <div
+          style={{
+            height: "260px",
+            overflow: "hidden",
+            background: "#fff"
+          }}
+        >
+
+          <img
+            src={image}
+            className="card-img-top h-100"
+            alt={product.name}
+            style={{
+              objectFit: "contain",
+              padding: "15px",
+              transition: "0.3s"
+            }}
+          />
+
+        </div>
+
       </Link>
 
-      <div className="card-body">
-        <h5>{product.name}</h5>
-        <p>{product.desc}</p>
+      {/* ===================================== */}
+      {/* BODY */}
+      {/* ===================================== */}
 
-        {product.discount && <span className="badge bg-success">-{product.discount}%</span>}
+      <div className="card-body d-flex flex-column">
 
-        <h5>
-          {product.offerPrice ? (
-            <>
-              <span className="text-danger fw-bold">S/ {product.offerPrice}</span>{" "}
-              <small className="text-muted text-decoration-line-through">
-                S/ {product.price}
-              </small>
-            </>
-          ) : (
-            <>S/ {product.price}</>
-          )}
+        {/* CATEGORÍA */}
+
+        <small className="text-muted mb-2 text-uppercase">
+
+          {product.category}
+
+        </small>
+
+        {/* NOMBRE */}
+
+        <h5 className="fw-bold">
+
+          {product.name}
+
         </h5>
 
-        <p className={product.stock > 5 ? "text-success" : "text-danger"}>
-          {product.stock > 5
-            ? "✅ Disponible"
-            : product.stock > 0
-              ? "⚠️ Últimas unidades"
-              : "❌ Agotado"}
+        {/* DESCRIPCIÓN */}
+
+        <p className="text-muted small flex-grow-1">
+
+          {
+            product.description ||
+            "Producto tecnológico disponible en TechNova Store."
+          }
+
         </p>
 
-        <button
-          className="btn btn-primary w-100"
-          onClick={() => addToCart(product)}
-          disabled={product.stock === 0}
+        {/* BADGES */}
+
+        <div className="mb-2">
+
+          {
+            product.discount > 0 && (
+
+              <span className="badge bg-success me-2">
+
+                -{product.discount}%
+
+              </span>
+
+            )
+          }
+
+          {
+            price > 3000 && (
+
+              <span className="badge bg-danger">
+
+                🔥 Top
+
+              </span>
+
+            )
+          }
+
+        </div>
+
+        {/* PRECIOS */}
+
+        <div className="mb-3">
+
+          {
+            hasOffer ? (
+
+              <>
+
+                <span className="text-danger fw-bold fs-5">
+
+                  S/ {offerPrice.toFixed(2)}
+
+                </span>
+
+                <small className="text-muted text-decoration-line-through ms-2">
+
+                  S/ {price.toFixed(2)}
+
+                </small>
+
+              </>
+
+            ) : (
+
+              <span className="fw-bold fs-5">
+
+                S/ {price.toFixed(2)}
+
+              </span>
+
+            )
+          }
+
+        </div>
+
+        {/* STOCK */}
+
+        <p
+          className={
+            stock > 5
+              ? "text-success fw-bold"
+              : stock > 0
+                ? "text-warning fw-bold"
+                : "text-danger fw-bold"
+          }
         >
-          Agregar
+
+          {
+            stock > 5
+              ? "✅ Disponible"
+              : stock > 0
+                ? `⚠️ Últimas ${stock} unidades`
+                : "❌ Agotado"
+          }
+
+        </p>
+
+        {/* BOTÓN */}
+
+        <button
+          className="btn btn-primary w-100 rounded-pill mt-auto"
+          onClick={() => addToCart(product)}
+          disabled={stock === 0}
+        >
+
+          {
+            stock === 0
+              ? "Sin stock"
+              : "Agregar al carrito"
+          }
+
         </button>
+
       </div>
+
     </div>
+
   );
 }
 

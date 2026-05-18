@@ -1,29 +1,60 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { products } from "../data/products";
+import { getProducts }
+  from "../services/apiService";
 
 function Home() {
   const [showOferta, setShowOferta] = useState(true);
-  const storedProducts =
-    JSON.parse(localStorage.getItem("products")) || products;
+  const [products, setProducts] =
+    useState([]);
 
-  const destacados = storedProducts
-    .filter(p => p.offerPrice)
+  const destacados = products
+    .filter(p => p.offer_price)
     .slice(0, 4);
-    
+
+
   // 👇 Auto-cerrar mensaje de oferta después de 5 segundos
   useEffect(() => {
+
+    cargarProductos();
+
     if (showOferta) {
-      const timer = setTimeout(() => setShowOferta(false), 5000);
-      return () => clearTimeout(timer);
+
+      const timer =
+        setTimeout(() => {
+
+          setShowOferta(false);
+
+        }, 5000);
+
+      return () =>
+        clearTimeout(timer);
     }
+
   }, [showOferta]);
+
+  const cargarProductos =
+    async () => {
+
+      try {
+
+        const data =
+          await getProducts();
+
+        setProducts(data);
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+    };
 
   return (
     <div>
 
       {/* HERO CON BANNER */}
-      <div className="bg-dark text-white text-center p-5 position-relative overflow-hidden">
+      <div className="bg-dark text-white text-center p-5 position-relative overflow-hidden hero-glow">
         <h1 className="display-4 fw-bold">TechNova Store</h1>
         <p className="lead">
           Innovación tecnológica para tu día a día. Equipos confiables, asesoría experta y precios competitivos.
@@ -127,14 +158,14 @@ function Home() {
               <div key={p.id} className="col-md-3 mb-4">
                 <div className="card h-100 shadow-sm">
                   <Link to={`/producto/${p.id}`}>
-                    <img src={p.img} className="card-img-top" alt={p.name} />
+                    <img src={p.img_url} className="card-img-top" alt={p.name} />
                   </Link>
                   <div className="card-body d-flex flex-column">
                     <h6 className="card-title">{p.name}</h6>
-                    <p className="card-text text-truncate">{p.desc}</p>
-                    {p.offerPrice ? (
+                    <p className="card-text text-truncate">{p.description}</p>
+                    {p.offer_price ? (
                       <div>
-                        <span className="text-danger fw-bold">S/ {p.offerPrice}</span>{" "}
+                        <span className="text-danger fw-bold">S/ {p.offer_price}</span>{" "}
                         <small className="text-muted text-decoration-line-through">S/ {p.price}</small>
                       </div>
                     ) : (

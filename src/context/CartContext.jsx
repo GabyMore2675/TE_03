@@ -1,70 +1,252 @@
-import { createContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  useEffect
+} from "react";
 
 export const CartContext = createContext();
 
 export function CartProvider({ children }) {
 
+  // =========================================
+  // CARGAR CARRITO DESDE LOCALSTORAGE
+  // =========================================
+
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem("cart");
-    return saved ? JSON.parse(saved) : [];
-  });
 
-  const [msg, setMsg] = useState(""); // 👈 mensaje global tipo toast
+    try {
 
-  const addToCart = (product) => {
-    const exist = cart.find(p => p.id === product.id);
+      const saved =
+        localStorage.getItem("cart");
 
-    if (exist) {
-      if ((exist.qty || 1) >= 3) {
-        setMsg("⚠️ Máximo 3 unidades por compra");
-        setTimeout(() => setMsg(""), 2000);
-        return;
-      }
+      return saved ? JSON.parse(saved) : [];
 
-      if ((exist.qty || 1) >= product.stock) {
-        setMsg("⚠️ No hay suficiente stock");
-        setTimeout(() => setMsg(""), 2000);
-        return;
-      }
+    } catch (error) {
 
-      setCart(cart.map(p =>
-        p.id === product.id
-          ? { ...p, qty: (p.qty || 1) + 1 }
-          : p
-      ));
-    } else {
-      if (product.stock <= 0) {
-        setMsg("❌ Sin stock");
-        setTimeout(() => setMsg(""), 2000);
-        return;
-      }
+      console.error(
+        "Error cargando carrito:",
+        error
+      );
 
-      setCart([...cart, { ...product, qty: 1 }]);
+      return [];
     }
 
-    // 👇 mensaje de éxito al agregar
-    setMsg(`Producto "${product.name}" agregado al carrito ✔`);
-    setTimeout(() => setMsg(""), 2000);
+  });
+
+  // =========================================
+  // MENSAJE GLOBAL
+  // =========================================
+
+  const [msg, setMsg] = useState("");
+
+  // =========================================
+  // AGREGAR AL CARRITO
+  // =========================================
+
+  const addToCart = (product) => {
+
+    if (!product) return;
+
+    setCart((prevCart) => {
+
+      const exist = prevCart.find(
+        (p) => p.id === product.id
+      );
+
+      // ===============================
+      // VALIDAR STOCK
+      // ===============================
+
+      if (product.stock <= 0) {
+
+        setMsg("❌ Producto sin stock");
+
+        setTimeout(() => {
+          setMsg("");
+        }, 2000);
+
+        return prevCart;
+      }
+
+      // ===============================
+      // SI YA EXISTE
+      // ===============================
+
+      if (exist) {
+
+        const currentQty =
+          exist.qty || 1;
+
+        // máximo 3
+        if (currentQty >= 3) {
+
+          setMsg(
+            "⚠️ Máximo 3 unidades por compra"
+          );
+
+          setTimeout(() => {
+            setMsg("");
+          }, 2000);
+
+          return prevCart;
+        }
+
+        // validar stock real
+        if (currentQty >= product.stock) {
+
+          setMsg(
+            "⚠️ No hay suficiente stock"
+          );
+
+          setTimeout(() => {
+            setMsg("");
+          }, 2000);
+
+          return prevCart;
+        }
+
+        const updatedCart =
+          prevCart.map((p) =>
+
+            p.id === product.id
+              ? {
+                  ...p,
+                  qty: currentQty + 1
+                }
+              : p
+          );
+
+        setMsg(
+          `Producto "${product.name}" agregado ✔`
+        );
+
+        setTimeout(() => {
+          setMsg("");
+        }, 2000);
+
+        return updatedCart;
+      }
+
+      // ===============================
+      // NUEVO PRODUCTO
+      // ===============================
+
+      const newCart = [
+        ...prevCart,
+        {
+          ...product,
+          qty: 1
+        }
+      ];
+
+      setMsg(
+        `Producto "${product.name}" agregado ✔`
+      );
+
+      setTimeout(() => {
+        setMsg("");
+      }, 2000);
+
+      return newCart;
+    });
   };
 
-  const removeFromCart = (index) => {
-    setCart(cart.filter((_, i) => i !== index));
+  // =========================================
+  // ELIMINAR PRODUCTO
+  // =========================================
+
+  const removeFromCart = (id) => {
+
+    setCart((prevCart) =>
+      prevCart.filter(
+        (item) => item.id !== id
+      )
+    );
+
+    setMsg("🗑️ Producto eliminado");
+
+    setTimeout(() => {
+      setMsg("");
+    }, 2000);
   };
 
-  const updateQty = (index, qty) => {
-    const newCart = [...cart];
-    if (qty < 1 || qty > newCart[index].stock) return;
-    newCart[index].qty = qty;
-    setCart(newCart);
+  // =========================================
+  // ACTUALIZAR CANTIDAD
+  // =========================================
+
+  const updateQty = (id, qty) => {
+
+    if (qty < 1) return;
+
+    setCart((prevCart) =>
+
+      prevCart.map((item) => {
+
+        if (item.id !== id) {
+          return item;
+        }
+
+        // límite máximo 3
+        if (qty > 3) {
+          qty = 3;
+        }
+
+        // validar stock
+        if (qty > item.stock) {
+          qty = item.stock;
+        }
+
+        return {
+          ...item,
+          qty
+        };
+      })
+    );
   };
+
+  // =========================================
+  // LIMPIAR CARRITO
+  // =========================================
+
+  const clearCart = () => {
+
+    setCart([]);
+
+    setMsg("🛒 Carrito vaciado");
+
+    setTimeout(() => {
+      setMsg("");
+    }, 2000);
+  };
+
+  // =========================================
+  // GUARDAR EN LOCALSTORAGE
+  // =========================================
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(cart)
+    );
+
   }, [cart]);
+
+  // =========================================
+  // PROVIDER
+  // =========================================
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQty, setCart, msg }}
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        updateQty,
+        clearCart,
+        setCart,
+        msg
+      }}
     >
       {children}
     </CartContext.Provider>
